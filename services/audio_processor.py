@@ -20,7 +20,7 @@ class AudioProcessor:
         return y, sr
     
     @staticmethod
-    def detect_silence(y, sr, frame_length=2048, hop_length=512):
+    def detect_silence(y, sr, frame_length=2048, hop_length=512, db_threshold=SILENCE_DB_THRESHOLD):
         """沈黙を検出
         
         Args:
@@ -35,7 +35,7 @@ class AudioProcessor:
         # RMS（音量）をdBに変換（最大値=0dB）
         rms = librosa.feature.rms(y=y, frame_length=frame_length, hop_length=hop_length)[0]
         rms_db = librosa.amplitude_to_db(rms, ref=np.max)
-        silent_frames = rms_db < SILENCE_DB_THRESHOLD
+        silent_frames = rms_db < db_threshold
         
         # フレームから時間に変換
         times = librosa.frames_to_time(np.arange(len(silent_frames)), sr=sr, hop_length=hop_length)
@@ -112,13 +112,14 @@ class AudioProcessor:
         Returns:
             dict: 統計情報
         """
-        short_silences = [e for e in silence_events if e["category"] == "1.5-2s"]
+        # 統計は2秒以上のみ対象
+        short_silences = []
         long_silences = [e for e in silence_events if e["category"] == "2s+"]
         
-        total_duration = sum(e["duration"] for e in silence_events)
+        total_duration = sum(e["duration"] for e in long_silences)
         
-        # Top10の長い沈黙を取得
-        sorted_silences = sorted(silence_events, key=lambda x: x["duration"], reverse=True)[:10]
+        # Top10の長い沈黙を取得（2秒以上のみ）
+        sorted_silences = sorted(long_silences, key=lambda x: x["duration"], reverse=True)[:10]
         
         stats = {
             "total_silence_time": round(total_duration, 2),

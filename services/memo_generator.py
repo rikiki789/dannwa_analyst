@@ -24,9 +24,6 @@ class MemoGenerationService:
         total_silence = silence_stats["total_silence_time"]
         silence_percentage = round((total_silence / total_duration * 100), 1) if total_duration > 0 else 0
         
-        short_count = silence_stats["1.5-2s"]["count"]
-        short_time = silence_stats["1.5-2s"]["total_time"]
-        
         long_count = silence_stats["2s+"]["count"]
         long_time = silence_stats["2s+"]["total_time"]
         
@@ -40,17 +37,17 @@ class MemoGenerationService:
 - 文字起こし:
 {transcript[:1000]}... (以下省略)
 
-【沈黙統計】
+【沈黙統計】（2秒以上のみ集計）
 - 全体の沈黙時間: {self._format_time(total_silence)} ({silence_percentage}%)
-- 1.5～2秒の沈黙: {short_count}回（計{self._format_time(short_time)}）
 - 2秒以上の沈黙: {long_count}回（計{self._format_time(long_time)}）
 - 最長沈黙: {self._format_time(longest_silence)}
 
 【出力形式】
-以下の3項目を簡潔に出力してください：
-1. 【特徴】 - 沈黙パターンや会話の流れの特徴（2-3行）
-2. 【注目区間】 - 長い沈黙や重要そうな箇所の解釈（2-3行、具体的な時間を含む）
-3. 【注意点】 - 音声品質や特記事項があれば（1-2行、なければ「なし」）
+以下の4項目を簡潔に出力してください：
+1. 【まとめ】 - 会話内容の要約（2-3行）
+2. 【特徴】 - 沈黙パターンや会話の流れの特徴（2-3行）
+3. 【注目区間】 - 長い沈黙や重要そうな箇所の解釈（2-3行、具体的な時間を含む）
+4. 【注意点】 - 音声品質や特記事項があれば（1-2行、なければ「なし」）
 
 簡潔に、箇条書きで出力してください。"""
 
