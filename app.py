@@ -15,9 +15,9 @@ if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
 from config import (
+    DEEPSEEK_API_KEY,
     HF_TOKEN,
     MAX_FILE_SIZE_MB,
-    OPENAI_API_KEY,
     SILENCE_DB_OPTIONS,
     SILENCE_DB_THRESHOLD,
     SUPPORTED_FORMATS,
@@ -125,8 +125,8 @@ def main():
         unsafe_allow_html=True,
     )
 
-    if not OPENAI_API_KEY:
-        st.error("OPENAI_API_KEY が見つかりません。.env を確認してください。")
+    if not DEEPSEEK_API_KEY:
+        st.error("DEEPSEEK_API_KEY が見つかりません。.env を確認してください。")
         st.stop()
 
     st.markdown(
